@@ -1,9 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { IBoard } from "../../types";
 
 interface IBoardState {
   modalActive: boolean;
   boardArray: IBoard[];
+}
+
+interface IAddBoardAction {
+  board: IBoard;
 }
 
 const initialState: IBoardState = {
@@ -51,7 +55,13 @@ const initialState: IBoardState = {
 const boardsSlice = createSlice({
   name: "boards",
   initialState,
-  reducers: {},
+  reducers: {
+    addBoard: (state, { payload }: PayloadAction<IAddBoardAction>) => {
+      state.boardArray.push(payload.board);
+    },
+  },
 });
+
+export const { addBoard } = boardsSlice.actions;
 
 export const boardsReducer = boardsSlice.reducer;
