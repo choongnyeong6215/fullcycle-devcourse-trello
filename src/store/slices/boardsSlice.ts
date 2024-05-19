@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { IBoard } from "../../types";
+import { IBoard, IList, ITask } from "../../types";
+import { board } from "../../App.css";
 
 interface IBoardState {
   modalActive: boolean;
@@ -8,6 +9,22 @@ interface IBoardState {
 
 interface IAddBoardAction {
   board: IBoard;
+}
+
+interface IDeleteListAction {
+  boardId: string;
+  listId: string;
+}
+
+interface IAddListAction {
+  boardId: string;
+  list: IList;
+}
+
+interface IAddTaskAction {
+  boardId: string;
+  listId: string;
+  task: ITask;
 }
 
 const initialState: IBoardState = {
@@ -59,9 +76,49 @@ const boardsSlice = createSlice({
     addBoard: (state, { payload }: PayloadAction<IAddBoardAction>) => {
       state.boardArray.push(payload.board);
     },
+    addList: (state, { payload }: PayloadAction<IAddListAction>) => {
+      state.boardArray.map((board) =>
+        board.boardId === payload.boardId
+          ? { ...board, lists: board.lists.push(payload.list) }
+          : board
+      );
+    },
+    addTask: (state, { payload }: PayloadAction<IAddTaskAction>) => {
+      state.boardArray.map((board) =>
+        board.boardId === payload.boardId
+          ? {
+              ...board,
+              lists: board.lists.map((list) =>
+                list.listId === payload.listId
+                  ? {
+                      ...list,
+                      tasks: list.tasks.push(payload.task),
+                    }
+                  : list
+              ),
+            }
+          : board
+      );
+    },
+    deleteList: (state, { payload }: PayloadAction<IDeleteListAction>) => {
+      state.boardArray = state.boardArray.map((board) =>
+        board.boardId === payload.boardId
+          ? {
+              ...board,
+              lists: board.lists.filter(
+                (list) => list.listId !== payload.listId
+              ),
+            }
+          : board
+      );
+    },
+    setModalActive: (state, { payload }: PayloadAction<boolean>) => {
+      state.modalActive = payload;
+    },
   },
 });
 
-export const { addBoard } = boardsSlice.actions;
+export const { addBoard, addList, addTask, deleteList, setModalActive } =
+  boardsSlice.actions;
 
 export const boardsReducer = boardsSlice.reducer;
