@@ -36,8 +36,8 @@ const List: FC<IListProps> = ({ boardId, list }) => {
     taskId: string,
     task: ITask
   ) => {
-    // dispatch(setModalData({ boardId, listId, task }));
-    // dispatch(setModalActive(true));
+    dispatch(setModalData({ boardId, listId, task }));
+    dispatch(setModalActive(true));
   };
 
   return (
