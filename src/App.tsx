@@ -8,11 +8,15 @@ import {
 } from "./App.css";
 import BoardList from "./components/BoardList/BoardList";
 import ListsContainer from "./components/ListsContainer/ListsContainer";
-import { useTypedSelector } from "./hooks/redux";
+import { useTypedDispatch, useTypedSelector } from "./hooks/redux";
 import EditModal from "./components/EditModal/EditModal";
 import LoggerModal from "./components/LoggerModal/LoggerModal";
+import { deleteBoard } from "./store/slices/boardsSlice";
+import { v4 } from "uuid";
+import { addLog } from "./store/slices/loggerSlice";
 
 const App = () => {
+  const dispatch = useTypedDispatch();
   const [isLoggerOpen, setIsLoggerOpen] = useState(false);
   const [activeBoardId, setActiveBoardId] = useState("board-0");
   const modalActive = useTypedSelector((state) => state.boards.modalActive);
@@ -24,6 +28,39 @@ const App = () => {
   )[0];
 
   const lists = getActiveBoard.lists;
+
+  const handleDeleteBoard = () => {
+    if (boards.length > 1) {
+      dispatch(
+        deleteBoard({
+          boardId: getActiveBoard.boardId,
+        })
+      );
+
+      dispatch(
+        addLog({
+          logId: v4(),
+          logMessage: `게시판 삭제하기: ${getActiveBoard.boardId}`,
+          logAuthor: `User`,
+          logTimeStamp: String(Date.now()),
+        })
+      );
+
+      const newIndexToSet = () => {
+        const indexToBeDeleted = boards.findIndex(
+          (board) => board.boardId === activeBoardId
+        );
+
+        return indexToBeDeleted === 0
+          ? indexToBeDeleted + 1
+          : indexToBeDeleted - 1;
+      };
+
+      setActiveBoardId(boards[newIndexToSet()].boardId);
+    } else {
+      alert(`최소 게시판 개수는 한 개 입니다.`);
+    }
+  };
 
   return (
     <div className={appContainer}>
@@ -40,7 +77,9 @@ const App = () => {
       </div>
 
       <div className={buttons}>
-        <button className={deleteBoardButton}>이 게시판 삭제하기</button>
+        <button className={deleteBoardButton} onClick={handleDeleteBoard}>
+          이 게시판 삭제하기
+        </button>
         <button
           className={loggerButton}
           onClick={() => setIsLoggerOpen(!isLoggerOpen)}

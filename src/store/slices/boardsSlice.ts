@@ -32,6 +32,10 @@ interface IDeleteTaskAction {
   taskId: string;
 }
 
+interface IDeleteBoardAction {
+  boardId: string;
+}
+
 const initialState: IBoardState = {
   modalActive: false,
   boardArray: [
@@ -41,31 +45,31 @@ const initialState: IBoardState = {
       lists: [
         {
           listId: "list-0",
-          listName: "List 1",
+          listName: "list 1",
           tasks: [
             {
               taskId: "task-0",
-              taskName: "Task 1",
-              taskDescription: "Description1",
-              taskOwner: "Leeee",
+              taskName: "task 1",
+              taskDescription: "task 1",
+              taskOwner: "leeee",
             },
             {
               taskId: "task-1",
-              taskName: "Task 2",
-              taskDescription: "Description2",
-              taskOwner: "Leeee",
+              taskName: "task 2",
+              taskDescription: "task 2",
+              taskOwner: "leeee",
             },
           ],
         },
         {
           listId: "list-1",
-          listName: "List 2",
+          listName: "list 2",
           tasks: [
             {
               taskId: "task-2",
-              taskName: "Task 3",
-              taskDescription: "Description3",
-              taskOwner: "kwak",
+              taskName: "task 3",
+              taskDescription: "task 3",
+              taskOwner: "leeee",
             },
           ],
         },
@@ -80,6 +84,11 @@ const boardsSlice = createSlice({
   reducers: {
     addBoard: (state, { payload }: PayloadAction<IAddBoardAction>) => {
       state.boardArray.push(payload.board);
+    },
+    deleteBoard: (state, { payload }: PayloadAction<IDeleteBoardAction>) => {
+      state.boardArray = state.boardArray.filter(
+        (board) => board.boardId !== payload.boardId
+      );
     },
     addList: (state, { payload }: PayloadAction<IAddListAction>) => {
       state.boardArray.map((board) =>
@@ -165,6 +174,7 @@ const boardsSlice = createSlice({
 
 export const {
   addBoard,
+  deleteBoard,
   addList,
   addTask,
   updateTask,
