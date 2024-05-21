@@ -9,6 +9,7 @@ import { addLog } from "../../store/slices/loggerSlice";
 import { v4 } from "uuid";
 import { setModalData } from "../../store/slices/modalSlice";
 import { deleteButton, header, listWrapper, name } from "./List.css";
+import { Droppable } from "@hello-pangea/dnd";
 
 interface IListProps {
   boardId: string;
@@ -41,35 +42,44 @@ const List: FC<IListProps> = ({ boardId, list }) => {
   };
 
   return (
-    <div className={listWrapper}>
-      <div className={header}>
-        <div className={name}>{list.listName}</div>
-        <GrSubtract
-          className={deleteButton}
-          onClick={() => handleListDelete(list.listId)}
-        />
-      </div>
-
-      {list.tasks.map((task, idx) => (
+    <Droppable droppableId={list.listId}>
+      {(provided) => (
         <div
-          key={task.taskId}
-          onClick={() =>
-            handleTaskChange(boardId, list.listId, task.taskId, task)
-          }
+          className={listWrapper}
+          {...provided.droppableProps}
+          ref={provided.innerRef}
         >
-          <Task
-            key={idx}
-            index={idx}
-            boardId={boardId}
-            id={task.taskId}
-            taskName={task.taskName}
-            taskDescription={task.taskDescription}
-          />
+          <div className={header}>
+            <div className={name}>{list.listName}</div>
+            <GrSubtract
+              className={deleteButton}
+              onClick={() => handleListDelete(list.listId)}
+            />
+          </div>
+
+          {list.tasks.map((task, idx) => (
+            <div
+              key={task.taskId}
+              onClick={() =>
+                handleTaskChange(boardId, list.listId, task.taskId, task)
+              }
+            >
+              <Task
+                key={idx}
+                index={idx}
+                boardId={boardId}
+                id={task.taskId}
+                taskName={task.taskName}
+                taskDescription={task.taskDescription}
+              />
+            </div>
+          ))}
+          {provided.placeholder}
+          {/* 신규 태스크 추가 버튼 */}
+          <ActionButton boardId={boardId} listId={list.listId} />
         </div>
-      ))}
-      {/* 신규 태스크 추가 버튼 */}
-      <ActionButton boardId={boardId} listId={list.listId} />
-    </div>
+      )}
+    </Droppable>
   );
 };
 
