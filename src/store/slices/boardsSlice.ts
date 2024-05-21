@@ -36,6 +36,15 @@ interface IDeleteBoardAction {
   boardId: string;
 }
 
+interface ISortAction {
+  boardIndex: number;
+  droppableIdStart: string;
+  droppableIdEnd: string;
+  droppableIndexStart: number;
+  droppableIndexEnd: number;
+  draggableId: string;
+}
+
 const initialState: IBoardState = {
   modalActive: false,
   boardArray: [
@@ -169,6 +178,31 @@ const boardsSlice = createSlice({
     setModalActive: (state, { payload }: PayloadAction<boolean>) => {
       state.modalActive = payload;
     },
+    sort: (state, { payload }: PayloadAction<ISortAction>) => {
+      // 같은 카테고리인 경우
+      if (payload.droppableIdStart === payload.droppableIdEnd) {
+        const list = state.boardArray[payload.boardIndex].lists.find(
+          (list) => list.listId === payload.droppableIdStart
+        );
+
+        const card = list?.tasks.splice(payload.droppableIndexStart, 1);
+        list?.tasks.splice(payload.droppableIndexEnd, 0, ...card!);
+      }
+
+      // 다른 카테고리인 경우
+      if (payload.droppableIdStart !== payload.droppableIdEnd) {
+        const listStart = state.boardArray[payload.boardIndex].lists.find(
+          (list) => list.listId === payload.droppableIdStart
+        );
+
+        const card = listStart?.tasks.splice(payload.droppableIndexStart, 1);
+        const listEnd = state.boardArray[payload.boardIndex].lists.find(
+          (list) => list.listId === payload.droppableIdEnd
+        );
+
+        listEnd?.tasks.splice(payload.droppableIndexEnd, 0, ...card!);
+      }
+    },
   },
 });
 
@@ -181,6 +215,7 @@ export const {
   deleteTask,
   deleteList,
   setModalActive,
+  sort,
 } = boardsSlice.actions;
 
 export const boardsReducer = boardsSlice.reducer;
