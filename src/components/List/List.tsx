@@ -31,12 +31,7 @@ const List: FC<IListProps> = ({ boardId, list }) => {
     );
   };
 
-  const handleTaskChange = (
-    boardId: string,
-    listId: string,
-    taskId: string,
-    task: ITask
-  ) => {
+  const handleTaskChange = (boardId: string, listId: string, task: ITask) => {
     dispatch(setModalData({ boardId, listId, task }));
     dispatch(setModalActive(true));
   };
@@ -60,9 +55,7 @@ const List: FC<IListProps> = ({ boardId, list }) => {
           {list.tasks.map((task, idx) => (
             <div
               key={task.taskId}
-              onClick={() =>
-                handleTaskChange(boardId, list.listId, task.taskId, task)
-              }
+              onClick={() => handleTaskChange(boardId, list.listId, task)}
             >
               <Task
                 key={idx}

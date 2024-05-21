@@ -10,13 +10,7 @@ interface ITaskProps {
   taskDescription: string;
 }
 
-const Task: FC<ITaskProps> = ({
-  index,
-  boardId,
-  id,
-  taskName,
-  taskDescription,
-}) => {
+const Task: FC<ITaskProps> = ({ index, id, taskName, taskDescription }) => {
   return (
     <Draggable draggableId={id} index={index}>
       {(provided) => (

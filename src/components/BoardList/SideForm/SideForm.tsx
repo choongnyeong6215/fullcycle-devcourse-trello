@@ -8,10 +8,9 @@ import { addLog } from "../../../store/slices/loggerSlice";
 
 interface ISideFormProps {
   setIsFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  inputRef: React.RefObject<HTMLInputElement>;
 }
 
-const SideForm: FC<ISideFormProps> = ({ setIsFormOpen, inputRef }) => {
+const SideForm: FC<ISideFormProps> = ({ setIsFormOpen }) => {
   const [inputText, setInputText] = useState("");
   const dispatch = useTypedDispatch();
 
